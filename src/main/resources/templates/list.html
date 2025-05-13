@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smartphone List</title>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">SmartFix</a>
+        <ul class="nav-links">
+            <li><a href="/">Catalog</a></li>
+            <li><a href="/smartphones">Table</a></li>
+            <li><a href="/aboutus">About Us</a></li>
+            <li><a href="/contacts">Contacts</a></li>
+            <li><a href="/admin/users">USERS</a></li>
+        </ul>
+    </div>
+</nav>
+
+<h2>Smartphone Catalog</h2>
+<table id="smartphoneTable">
+    <tr>
+        <th>ID</th>
+        <th>Model</th>
+        <th>Description</th>
+        <th>OS</th>
+        <th>Storage</th>
+        <th>RAM</th>
+        <th>Camera</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total Cost</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="smartphone : ${smartphones}">
+        <td th:text="${smartphone.id}"></td>
+        <td th:text="${smartphone.model}"></td>
+        <td th:text="${smartphone.description}"></td>
+        <td th:text="${smartphone.os}"></td>
+        <td th:text="${smartphone.storage}"></td>
+        <td th:text="${smartphone.ram}"></td>
+        <td th:text="${smartphone.camera}"></td>
+        <td th:text="${smartphone.quantity}"></td>
+        <td th:text="${smartphone.price}"></td>
+        <td th:text="${smartphone.total}"></td>
+        <td>
+            <a th:href="@{/smartphones/{id}/edit(id=${smartphone.id})}">Edit</a> |
+            <a th:href="@{/smartphones/{id}/delete(id=${smartphone.id})}" style="color: red;">Delete</a>
+        </td>
+    </tr>
+</table>
+<a href="/smartphones/new" class="btn">Add Smartphone</a>
+
+</body>
+<footer class="footer">
+    <div class="footer-container">
+        <p>&copy; 2024 SmartFix. All rights reserved.</p>
+        <ul class="footer-links">
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Use</a></li>
+        </ul>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let rows = document.querySelectorAll("table tr");
+        rows.forEach((row, index) => {
+            if (index === 0) return;
+            row.addEventListener("click", function () {
+                this.classList.toggle("selected");
+            });
+        });
+    });
+</script>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html, body {
+        height: 100%;
+    }
+    body {
+        font-family: 'Roboto', sans-serif;
+        background: url('/images/background.jpg') no-repeat center center fixed;
+        background-size: cover;
+        background-color: #12022b;
+        color: #ffffff;
+        text-align: center;
+        padding: 0  ;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    h2 {
+        color: #ffffff;
+        font-size: 32px;
+        margin-top: 110px;
+        margin-bottom: 30px;
+    }
+
+    table {
+        width: 95%;
+        max-width: 1200px;
+        margin: auto;
+        border-collapse: collapse;
+        background: #1e1e1e;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        border-radius: 12px;
+        overflow: hidden;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    th, td {
+        padding: 14px 10px;
+        border-bottom: 1px solid #333;
+        text-align: center;
+    }
+
+    th {
+        background-color: #007BFF;
+        color: white;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    tr:hover {
+        background-color: #292929;
+        transition: background-color 0.3s ease;
+    }
+
+    a {
+        text-decoration: none;
+        color: #00bcd4;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    a:hover {
+        color: #ff9800;
+    }
+
+    .btn {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #ff5722, #ff9800);
+        color: white;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: background 0.3s;
+    }
+
+    .btn:hover {
+        background: linear-gradient(135deg, #ff9800, #ff5722);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    ::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+    }
+
+    .navbar {
+        background: linear-gradient(135deg, #1c1c3c, #5b2c6f);
+        padding: 15px 0;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+
+    .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 90%;
+        margin: auto;
+    }
+
+    .logo {
+        font-size: 26px;
+        font-weight: bold;
+        color: #fff;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .logo:hover {
+        color: #ffcc00;
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 25px;
+        padding: 0;
+        margin: 0;
+    }
+
+    .nav-links li {
+        display: inline;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+        transition: 0.3s;
+        padding: 8px 15px;
+        border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffcc00;
+    }
+
+    .footer {
+        background-color: #222;
+        color: #fff;
+        text-align: center;
+        padding: 20px 0;
+        width: 100%;
+        margin-top: 60px;
+    }
+
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-links {
+        list-style: none;
+        padding: 0;
+        margin-top: 10px;
+        display: flex;
+        gap: 20px;
+    }
+
+    .footer-links a {
+        color: #bbb;
+        text-decoration: none;
+    }
+
+    .footer-links a:hover {
+        color: #fff;
+    }
+
+    @media screen and (max-width: 768px) {
+        table, th, td {
+            font-size: 12px;
+            padding: 10px 5px;
+        }
+
+        .nav-container {
+            flex-direction: column;
+        }
+
+        .nav-links {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+    }
+</style>
+
+</html>

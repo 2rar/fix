@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Smartphone Form</title>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">SmartFix</a>
+        <ul class="nav-links">
+            <li><a href="/">Catalog</a></li>
+            <li><a href="/smartphones">Table</a></li>
+            <li><a href="/aboutus">About Us</a></li>
+            <li><a href="/contacts">Contacts</a></li>
+            <li><a href="/admin/users">USERS</a></li>
+        </ul>
+    </div>
+</nav>
+<div class="page-wrapper">
+    <div class="container">
+        <h2>Add / Edit Smartphone</h2>
+        <form th:action="@{/smartphones}" method="post" th:object="${smartphone}">
+            <input type="hidden" th:field="*{id}">
+            <div class="form-group">
+                <div>
+                    <label>Model:</label>
+                    <input type="text" th:field="*{model}" required>
+                </div>
+                <div>
+                    <label>Description:</label>
+                    <textarea th:field="*{description}" required oninput="adjustTextareaHeight(this)"></textarea>
+                </div>
+                <div>
+                    <label>Operating System:</label>
+                    <select th:field="*{os}">
+                        <option value="Android">Android</option>
+                        <option value="iOS">iOS</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Storage:</label>
+                    <select th:field="*{storage}">
+                        <option value="128GB">128GB</option>
+                        <option value="256GB">256GB</option>
+                        <option value="512GB">512GB</option>
+                        <option value="1TB">1TB</option>
+                    </select>
+                </div>
+                <div>
+                    <label>RAM:</label>
+                    <select th:field="*{ram}">
+                        <option value="6GB">6GB</option>
+                        <option value="8GB">8GB</option>
+                        <option value="12GB">12GB</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Camera:</label>
+                    <input type="text" id="camera" th:field="*{camera}" oninput="updateCamera()" required>
+                </div>
+                <div>
+                    <label>Quantity:</label>
+                    <input type="number" id="quantity" th:field="*{quantity}" step="1" required>
+                </div>
+                <div>
+                    <label>Price:</label>
+                    <input type="number" id="price" step="0.01" th:field="*{price}" required>
+                </div>
+                <div>
+                    <label>Total Cost:</label>
+                    <input type="number" id="total" step="0.01" th:field="*{total}" readonly>
+                </div>
+            </div>
+            <div class="button-group">
+                <button type="submit">Save</button>
+                <button type="reset">Clear</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<footer class="footer">
+    <div class="footer-container">
+        <p>&copy; 2024 SmartFix. All rights reserved.</p>
+        <ul class="footer-links">
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Use</a></li>
+        </ul>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const quantityInput = document.getElementById("quantity");
+        const priceInput = document.getElementById("price");
+        const totalInput = document.getElementById("total");
+        const cameraInput = document.getElementById("camera");
+
+        function updateTotal() {
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            totalInput.value = (quantity * price).toFixed(2);
+        }
+
+        function updateCamera() {
+            let cameraValue = cameraInput.value.replace(/[^0-9]/g, '');
+            if (cameraValue) {
+                cameraInput.value = cameraValue + "МП";
+            } else {
+                cameraInput.value = "";
+            }
+        }
+
+        function adjustTextareaHeight(textarea) {
+            textarea.style.height = "auto";
+            textarea.style.height = Math.min(textarea.scrollHeight, 5 * parseFloat(getComputedStyle(textarea).lineHeight)) + "px";
+        }
+
+        quantityInput.addEventListener("input", updateTotal);
+        priceInput.addEventListener("input", updateTotal);
+        cameraInput.addEventListener("input", updateCamera);
+
+        updateTotal();
+    });
+</script>
+<style>
+    ::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html, body {
+        height: 100%;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: url('/images/background.jpg') no-repeat center center fixed;
+        background-size: contain;
+        background-color: #12022b;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    /* Обертка для всего содержимого */
+    .page-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-top: 80px; /* отступ от navbar */
+    }
+
+    /* Контейнер по центру */
+    .container {
+        background: #1e1e1e;
+        padding: 20px;
+        margin: 0 auto 40px auto;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        width: 80vh;
+        max-width: 90%;
+        transition: transform 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container:hover {
+        transform: scale(1.02);
+    }
+
+    .form-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .form-group div {
+        flex: 1;
+        min-width: 45%;
+    }
+
+    label {
+        display: block;
+        margin-top: 10px;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border-radius: 5px;
+        border: none;
+        background: #333;
+        color: #fff;
+    }
+
+    textarea {
+        resize: none;
+        height: 5vh;
+        max-height: 5vh;
+        overflow-y: auto;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    button {
+        margin-top: 15px;
+        width: 15vh;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background: linear-gradient(45deg, #7a37e6, #8255c9);
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    button:hover {
+        background: linear-gradient(45deg, #8255c9, #7a37e6);
+    }
+
+    .navbar {
+        background: linear-gradient(135deg, #1c1c3c, #5b2c6f);
+        padding: 15px 0;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+
+    .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 90%;
+        margin: auto;
+    }
+
+    .logo {
+        font-size: 26px;
+        font-weight: bold;
+        color: #fff;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .logo:hover {
+        color: #ffcc00;
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 25px;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+        transition: 0.3s;
+        padding: 8px 15px;
+        border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffcc00;
+    }
+
+    /* Футер без fixed */
+    .footer {
+        background-color: #222;
+        color: #fff;
+        text-align: center;
+        padding: 10px 0;
+        width: 100%;
+    }
+
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-links {
+        list-style: none;
+        padding: 0;
+        margin-top: 5px;
+        display: flex;
+        gap: 15px;
+    }
+
+    .footer-links a {
+        color: #bbb;
+        text-decoration: none;
+    }
+
+    .footer-links a:hover {
+        color: #fff;
+    }
+
+</style>
+</html>

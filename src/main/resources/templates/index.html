@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smartphone Catalog</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">SmartFix</a>
+        <ul class="nav-links">
+            <li><a href="/">Catalog</a></li>
+            <li><a href="/smartphones">Table</a></li>
+            <li><a href="/aboutus">About Us</a></li>
+            <li><a href="/contacts">Contacts</a></li>
+            <li><a href="/admin/users">USERS</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main class="content-wrapper">
+    <div class="container">
+        <h1>Smartphone Catalog</h1>
+        <div class="smartphones" id="smartphoneList"></div>
+    </div>
+
+    <div class="cart-icon" onclick="openCart()">
+        🛒 <span id="cartCount" class="cart-count">0</span>
+    </div>
+
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCart()">&times;</span>
+            <h2>Cart</h2>
+            <ul id="cartItems"></ul>
+            <button onclick="clearCart()">Clear Cart</button>
+        </div>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <p>&copy; 2024 SmartFix. All rights reserved.</p>
+        <ul class="footer-links">
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Use</a></li>
+        </ul>
+    </div>
+</footer>
+</body>
+<script>
+    function loadSmartphones() {
+        axios.get('/api/smartphones')
+            .then(response => {
+                const smartphones = response.data;
+                const container = document.getElementById('smartphoneList');
+                container.innerHTML = '';
+
+                smartphones.forEach(smartphone => {
+                    const div = document.createElement('div');
+                    div.classList.add('smartphone');
+
+                    const savedImage = sessionStorage.getItem(`smartphone_${smartphone.id}`) || smartphone.image;
+
+                    div.innerHTML = `
+                    <img id="image_${smartphone.id}" src="${savedImage}" alt="${smartphone.model}">
+                    <h3>${smartphone.model}</h3>
+                    <p>${smartphone.description}</p>
+                    <p>${smartphone.price} $</p>
+                    <input type="file" class="file-input" id="file_${smartphone.id}" onchange="uploadImage(event, ${smartphone.id})">
+                    <button class="choose-image-btn" onclick="document.getElementById('file_${smartphone.id}').click()">📷</button>
+                `;
+
+                    const addButton = document.createElement('button');
+                    addButton.textContent = 'Добавить в корзину';
+                    addButton.addEventListener('click', () => {
+                        // Получаем обновлённую картинку (если пользователь менял)
+                        const currentImage = document.getElementById(`image_${smartphone.id}`).src;
+                        addToCart(smartphone.id, smartphone.model, smartphone.price, currentImage);
+                    });
+
+                    div.appendChild(addButton);
+                    container.appendChild(div);
+                });
+            })
+            .catch(error => console.error('Ошибка загрузки смартфонов:', error));
+    }
+
+
+    function uploadImage(event, id) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgElement = document.getElementById(`image_${id}`);
+                imgElement.src = e.target.result;
+
+                // Сохраняем в sessionStorage
+                sessionStorage.setItem(`smartphone_${id}`, e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function addToCart(id, name, price, image) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.push({id, name, price, image});
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+        alert('Товар добавлен в корзину!');
+    }
+
+    function updateCartCount() {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        document.getElementById('cartCount').innerText = cart.length;
+    }
+
+    function openCart() {
+        const modal = document.getElementById('cartModal');
+        modal.style.display = 'block';
+        renderCartItems();
+    }
+
+    function closeCart() {
+        document.getElementById('cartModal').style.display = 'none';
+    }
+
+    function renderCartItems() {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const cartItemsContainer = document.getElementById('cartItems');
+        cartItemsContainer.innerHTML = '';
+
+        cart.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+            <img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+            ${item.name} - ${item.price} $
+            <button onclick="removeFromCart(${index})">❌</button>
+        `;
+            cartItemsContainer.appendChild(li);
+        });
+
+        updateCartCount();
+    }
+
+    function removeFromCart(index) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCartItems(); // Перерисовываем корзину после удаления
+    }
+
+    function clearCart() {
+        localStorage.removeItem('cart');
+        renderCartItems();
+        updateCartCount(); // Добавляем обновление количества товаров
+    }
+
+    window.onload = function () {
+        loadSmartphones();
+        updateCartCount();
+    };
+
+</script>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html, body {
+        height: 100%;
+    }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: url('/images/background.jpg') no-repeat center center fixed;
+        background-size: cover;
+        background-color: #12022b;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    .content-wrapper {
+        flex: 1; /* Растягивается на всю оставшуюся высоту */
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 95%;
+        max-width: 1200px;
+        margin: 120px auto 30px auto;
+        text-align: center;
+    }
+
+    .container h1 {
+        color: #fff;
+        margin-bottom: 30px;
+    }
+
+    .smartphones {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .smartphone {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 15px;
+        width: 280px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .smartphone:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .smartphone img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .smartphone h3 {
+        margin: 10px 0 5px;
+    }
+
+    .smartphone p {
+        margin: 5px 0;
+    }
+
+    .smartphone button {
+        margin-top: 8px;
+        padding: 8px 12px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+
+    .smartphone button:hover {
+        background-color: #218838;
+    }
+
+    .choose-image-btn {
+        background-color: #007bff;
+        margin-right: 5px;
+    }
+
+    .choose-image-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .file-input {
+        display: none;
+    }
+
+    .cart-icon {
+        position: fixed;
+        bottom: 5px;
+        right: 20px;
+        font-size: 26px;
+        cursor: pointer;
+        background: #ff6600;
+        color: white;
+        padding: 12px;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .cart-count {
+        background: red;
+        color: white;
+        padding: 4px 8px;
+        font-size: 14px;
+        border-radius: 50%;
+        position: absolute;
+        top: -5px;
+        right: -5px;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+        background-color: white;
+        margin: 8% auto;
+        padding: 20px;
+        width: 80%;
+        max-width: 600px;
+        border-radius: 12px;
+        text-align: left;
+        position: relative;
+    }
+
+    .modal-content h2 {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .modal-content ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .modal-content li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .modal-content img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    .modal-content button {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .modal-content button:hover {
+        background: #c82333;
+    }
+
+    .close {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+        font-size: 24px;
+        color: red;
+        cursor: pointer;
+    }
+    .navbar {
+        background: linear-gradient(135deg, #1c1c3c, #5b2c6f);
+        padding: 15px 0;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+
+    .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 90%;
+        margin: auto;
+    }
+
+    .logo {
+        font-size: 26px;
+        font-weight: bold;
+        color: #fff;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .logo:hover {
+        color: #ffcc00;
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 25px;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+        transition: 0.3s;
+        padding: 8px 15px;
+        border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffcc00;
+    }
+
+    /* Футер без fixed */
+    .footer {
+        background-color: #222;
+        color: #fff;
+        text-align: center;
+        padding: 10px 0;
+        width: 100%;
+    }
+
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-links {
+        list-style: none;
+        padding: 0;
+        margin-top: 5px;
+        display: flex;
+        gap: 15px;
+    }
+
+    .footer-links a {
+        color: #bbb;
+        text-decoration: none;
+    }
+
+    .footer-links a:hover {
+        color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        .nav-container {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .nav-links {
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .smartphone {
+            width: 90%;
+        }
+
+        .modal-content {
+            width: 95%;
+        }
+    }
+    ::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+    }
+
+
+</style>
+</html>

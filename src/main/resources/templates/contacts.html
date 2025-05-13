@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | SmartFix</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background: #f7f7f7;
+      color: #333;
+    }
+
+    .navbar {
+      background: linear-gradient(135deg, #1c1c3c, #5b2c6f);
+      padding: 15px 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 90%;
+      margin: auto;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+      color: #fff;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .logo:hover {
+      color: #ffcc00;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      transition: 0.3s;
+      padding: 8px 15px;
+      border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffcc00;
+    }
+
+    .page-wrapper {
+      margin-top: 80px;
+      padding: 40px;
+      background: #fff;
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      color: #5b2c6f;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .contact-form input, .contact-form textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      background: #fdf9f8;
+      font-size: 15px;
+    }
+
+    .contact-form button {
+      width: 100%;
+      margin-top: 30px;
+      padding: 14px;
+      background: linear-gradient(135deg, #b76e79, #e8bbc2);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .contact-form button:hover {
+      background: linear-gradient(135deg, #e8bbc2, #b76e79);
+      transform: scale(1.03);
+    }
+
+    .footer {
+      background-color: #222;
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+      width: 100%;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .footer-links {
+      list-style: none;
+      padding: 0;
+      margin-top: 5px;
+      display: flex;
+      gap: 15px;
+    }
+
+    .footer-links a {
+      color: #bbb;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      color: #fff;
+    }
+
+  </style>
+</head>
+
+<body>
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/" class="logo">SmartFix</a>
+    <ul class="nav-links">
+      <li><a href="/">Catalog</a></li>
+      <li><a href="/smartphones">Smartphones List</a></li>
+      <li><a href="/aboutus">About Us</a></li>
+      <li><a href="/contacts">Contact Us</a></li>
+      <li><a href="/admin/users">Users</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+  <h2>Contact Us</h2>
+  <p>If you have any questions, comments, or need assistance, please feel free to reach out to us. We are here to help!</p>
+
+  <div class="contact-form">
+    <label for="name">Your Name:</label>
+    <input type="text" id="name" placeholder="Enter your name" required>
+
+    <label for="email">Your Email:</label>
+    <input type="email" id="email" placeholder="Enter your email" required>
+
+    <label for="message">Your Message:</label>
+    <textarea id="message" placeholder="Enter your message" required></textarea>
+
+    <button type="submit">Send Message</button>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-container">
+    <p>&copy; 2024 SmartFix. All rights reserved.</p>
+    <ul class="footer-links">
+      <li><a href="privacy.html">Privacy Policy</a></li>
+      <li><a href="terms.html">Terms of Use</a></li>
+    </ul>
+  </div>
+</footer>
+
+</body>
+</html>
